@@ -13,10 +13,11 @@
       <Label for="checkTest">Completed</Label>
       <input type="checkbox" name="checkTest" id="checkTest" {{'checked' if item['checked'] == 1 else ''}}>
     </div>
-    <input type="submit" value="Save">
+    <input class="btn btn-primary" type="submit" value="Save">
   </form>
   <hr>
   <form action="{{ url_for('userList.delete', id=item['id']) }}" method="post">
-    <input class="danger" type="submit" value="Delete" onclick="return confirm('Are you sure?');">
+    <input class="danger btn btn-outline-danger" type="submit" value="Delete"
+           onclick="return confirm('Are you sure?');">
   </form>
 {% endblock %}

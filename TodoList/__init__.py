@@ -3,7 +3,6 @@
 # Mini Project #3
 
 
-
 #(5/5 points) Initial comments with your name, class and project at the top of your .py file.
 #(5/5 points) Proper import of packages used.
 #(70/70 points) Using Flask you need to setup the following:

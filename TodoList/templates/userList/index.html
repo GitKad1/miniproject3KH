@@ -15,13 +15,13 @@
           <h1 style = "text-decoration:{{'line-through' if item['checked'] == 1 else 'none'}};">{{ item['listItem'] }}</h1>
           <div class="about">by {{ item['username'] }} on {{ item['created'].strftime('%Y-%m-%d') }}</div>
         </div>
-        {% if g.user['id'] == item['author_id'] %}
         {% if item['checked'] == 0 %}
         <input type="checkbox" name="checkTest" id="checkFalse" disabled>
         {% else %}
         <input type="checkbox" name="checkTest" id="checkTrue" disabled checked>
         {% endif %}
-        <a class="action" href="{{ url_for('userList.update', id=item['id']) }}">Edit</a>
+        {% if g.user['id'] == item['author_id'] %}
+          <a class="action" href="{{ url_for('userList.update', id=item['id']) }}">Edit</a>
         {% endif %}
       </header>
     </article>
