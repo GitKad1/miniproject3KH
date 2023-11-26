@@ -8,89 +8,95 @@ from TodoList.db import get_db
 
 bp = Blueprint('userList', __name__)
 
+
 @bp.route('/')
 def index():
     db = get_db()
-    posts = db.execute(
-        'SELECT p.id, title, body, created, author_id, username'
-        ' FROM post p JOIN user u ON p.author_id = u.id'
+    items = db.execute(
+        'SELECT i.id, listItem, created, author_id, checked, username'
+        ' FROM item i JOIN user u ON i.author_id = u.id'
         ' ORDER BY created DESC'
     ).fetchall()
-    return render_template('userList/index.html', posts=posts)
+    return render_template('userList/index.html', items=items)
+
 
 @bp.route('/create', methods=('GET', 'POST'))
 @login_required
 def create():
     if request.method == 'POST':
-        title = request.form['title']
-        body = request.form['body']
+        item = request.form['listItem']
         error = None
 
-        if not title:
-            error = 'Title is required.'
+        if not item:
+            error = 'List item is required.'
 
         if error is not None:
             flash(error)
         else:
             db = get_db()
             db.execute(
-                'INSERT INTO post (title, body, author_id)'
+                'INSERT INTO item (listItem, checked, author_id)'
                 ' VALUES (?, ?, ?)',
-                (title, body, g.user['id'])
+                (item, 0, g.user['id'])
             )
             db.commit()
             return redirect(url_for('userList.index'))
 
     return render_template('userList/create.html')
 
+
 def get_post(id, check_author=True):
-    post = get_db().execute(
-        'SELECT p.id, title, body, created, author_id, username'
-        ' FROM post p JOIN user u ON p.author_id = u.id'
-        ' WHERE p.id = ?',
+    items = get_db().execute(
+        'SELECT i.id, listItem, checked, created, author_id, username'
+        ' FROM item i JOIN user u ON i.author_id = u.id'
+        ' WHERE i.id = ?',
         (id,)
     ).fetchone()
 
-    if post is None:
+    if items is None:
         abort(404, f"Post id {id} doesn't exist.")
 
-    if check_author and post['author_id'] != g.user['id']:
+    if check_author and items['author_id'] != g.user['id']:
         abort(403)
 
-    return post
+    return items
+
 
 @bp.route('/<int:id>/update', methods=('GET', 'POST'))
 @login_required
 def update(id):
-    post = get_post(id)
+    item = get_post(id)
 
     if request.method == 'POST':
-        title = request.form['title']
-        body = request.form['body']
+        listitem = request.form['item']
         error = None
 
-        if not title:
+        if not listitem:
             error = 'Title is required.'
 
         if error is not None:
             flash(error)
         else:
+            completed = request.form.get('checkTest')
+            check = 1 if completed else 0
+            print(check)
             db = get_db()
             db.execute(
-                'UPDATE post SET title = ?, body = ?'
+                'UPDATE item SET listitem = ?, checked=?'
                 ' WHERE id = ?',
-                (title, body, id)
+                (listitem,check,id)
             )
             db.commit()
-            return redirect(url_for('blog.index'))
+            return redirect(url_for('userList.index'))
 
-    return render_template('userList/update.html', post=post)
+    return render_template('userList/update.html', item=item)
+
 
 @bp.route('/<int:id>/delete', methods=('POST',))
 @login_required
 def delete(id):
     get_post(id)
     db = get_db()
-    db.execute('DELETE FROM post WHERE id = ?', (id,))
+    db.execute('DELETE FROM item WHERE id = ?', (id,))
     db.commit()
     return redirect(url_for('userList.index'))
