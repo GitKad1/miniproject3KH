@@ -12,13 +12,31 @@
     <ul>
       {% if g.user %}
         <li><span>{{ g.user['username'] }}</span>
-        <li><a href="{{ url_for('user.logout') }}">Log Out</a>
+          <li><a href="{{ url_for('user.logout') }}">Log Out</a></li>
       {% else %}
-        <li><a href="{{ url_for('user.register') }}">Register</a>
-        <li><a href="{{ url_for('user.login') }}">Log In</a>
+          <li><a href="{{ url_for('user.register') }}">Register</a></li>
+          <li><a href="{{ url_for('user.login') }}">Log In</a></li>
       {% endif %}
+<button type="button" class="btn btn-primary text-center" data-bs-toggle="modal" data-bs-target="#exampleModal">Our Philosophy</button>
     </ul>
   </nav>
+  <!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Our Philosophy</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+          We believe in organizing teams to communicate and hold their members accountable through transparency. This ultimately brings success.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
   <section class="content">
     <header>
       {% block header %}{% endblock %}
